@@ -43,7 +43,7 @@ jobs:
     - name: Run Tests
       env:
         DJANGO_DEBUG: ${{ test_env.DJANGO_DEBUG }}
-        DJANGO_SECRET_KEY: ${{ test_env.SECRET_KEY }}
+        DJANGO_SECRET_KEY: ${{ test_env.DJANGO_SECRET_KEY }}
         DJANGO_LOGLEVEL: ${{ test_env.DJANGO_LOGLEVEL }}
         DJANGO_ALLOWED_HOSTS: ${{ test_env.DJANGO_ALLOWED_HOSTS }}
         POSTGRES_HOST: ${{ test_env.POSTGRES_HOST }}
