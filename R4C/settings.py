@@ -137,8 +137,6 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 LOGLEVEL = getenv("DJANGO_LOGLEVEL", "debug").upper()
-if LOGLEVEL == "":
-    LOGLEVEL = "DEBUG"
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
