@@ -39,7 +39,7 @@ jobs:
 
     services:
       postgres:
-        image: postgres:12.5
+        image: postgres:latest
         env:
           POSTGRES_DB: postgres
           POSTGRES_USER: postgres
