@@ -1,0 +1,64 @@
+[tool.black]
+line-length = 88
+force-exclude = '''
+/(
+    \.venv
+  | \.venv_dev
+  | migrations
+)/
+|
+(
+    .*/apps\.py
+  | .*/settings\.py
+  | manage\.py
+  | /R4C/wsgi\.py
+  | /R4C/asgi\.py
+)
+'''
+
+[tool.isort]
+profile = "black"
+line_length = 88
+skip_gitignore = true
+skip_glob = [
+    "**/migrations/*",
+    "**/settings.py",
+    "**/apps.py",
+    "**/.venv/*",
+    "**/.venv_dev/*",
+    "**wsgi.py",
+    "**asgi.py",
+    "**manage.py",
+]
+
+[tool.mypy]
+exclude = [
+    ".venv",
+    ".venv_dev",
+    ".*/migrations/",
+    '.*/apps\.py',
+    '.*/settings\.py',
+    '.*manage\.py',
+    '.*wsgi\.py',
+    '.*asgi\.py'
+]
+ignore_missing_imports = true
+
+[tool.poetry]
+name = "r4c"
+version = "0.1.0"
+description = "The solution of the test task from BST Digital"
+authors = ["Vladimir Volosnikov <volosnikovvladimir69@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+django = "^5.1.4"
+psycopg2 = "^2.9.10"
+pydantic = "^2.10.3"
+python-dotenv = "^1.0.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
