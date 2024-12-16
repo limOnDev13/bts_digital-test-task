@@ -17,9 +17,9 @@ jobs:
       postgres:
         image: postgres:12.5
         env:
-          POSTGRES_DB: ${{ test_env.POSTGRES_DB }}
-          POSTGRES_USER: ${{ test_env.POSTGRES_USER }}
-          POSTGRES_PASSWORD: ${{ test_env.POSTGRES_PASSWORD }}
+          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
         ports:
           - 5432:5432
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
@@ -42,13 +42,13 @@ jobs:
         mypy --check-untyped-defs .
     - name: Run Tests
       env:
-        DJANGO_DEBUG: ${{ test_env.DJANGO_DEBUG }}
-        DJANGO_SECRET_KEY: ${{ test_env.DJANGO_SECRET_KEY }}
-        DJANGO_LOGLEVEL: ${{ test_env.DJANGO_LOGLEVEL }}
-        DJANGO_ALLOWED_HOSTS: ${{ test_env.DJANGO_ALLOWED_HOSTS }}
-        POSTGRES_HOST: ${{ test_env.POSTGRES_HOST }}
-        POSTGRES_DB: ${{ test_env.POSTGRES_DB }}
-        POSTGRES_USER: ${{ test_env.POSTGRES_USER }}
-        POSTGRES_PASSWORD: ${{ test_env.POSTGRES_PASSWORD }}
+        DJANGO_DEBUG: ${{ secrets.DJANGO_DEBUG }}
+        DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
+        DJANGO_LOGLEVEL: ${{ secrets.DJANGO_LOGLEVEL }}
+        DJANGO_ALLOWED_HOSTS: ${{ secrets.DJANGO_ALLOWED_HOSTS }}
+        POSTGRES_HOST: ${{ secrets.POSTGRES_HOST }}
+        POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+        POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+        POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
       run: |
         python manage.py test
