@@ -6,9 +6,17 @@ on:
 
 jobs:
   build:
+    env:
+      DJANGO_DEBUG: ${{ secrets.DJANGO_DEBUG }}
+      DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
+      DJANGO_LOGLEVEL: ${{ secrets.DJANGO_LOGLEVEL }}
+      DJANGO_ALLOWED_HOSTS: ${{ secrets.DJANGO_ALLOWED_HOSTS }}
+      POSTGRES_HOST: ${{ secrets.POSTGRES_HOST }}
+      POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+      POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+      POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
 
     runs-on: ubuntu-latest
-    environment: build
     strategy:
       max-parallel: 4
       matrix:
@@ -42,15 +50,6 @@ jobs:
         flake8 .
         mypy --check-untyped-defs .
     - name: Run Tests
-      env:
-        DJANGO_DEBUG: ${{ secrets.DJANGO_DEBUG }}
-        DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
-        DJANGO_LOGLEVEL: ${{ secrets.DJANGO_LOGLEVEL }}
-        DJANGO_ALLOWED_HOSTS: ${{ secrets.DJANGO_ALLOWED_HOSTS }}
-        POSTGRES_HOST: ${{ secrets.POSTGRES_HOST }}
-        POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
-        POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
-        POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
       run: |
         echo ${{ secrets.DJANGO_DEBUG }}
         python manage.py test
