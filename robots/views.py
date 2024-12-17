@@ -59,7 +59,9 @@ def create_robot(request: HttpRequest) -> JsonResponse:
 def get_summary_in_file(request: HttpRequest) -> HttpResponse:
     """Get a summary of the robots produced over the last week in the format .xlsx."""
     dir_tmp = os.path.abspath(".")
-    with NamedTemporaryFile("w", suffix=".xlsx", delete=False, dir=dir_tmp) as tmp:
+    with NamedTemporaryFile(
+        "w", suffix=".xlsx", delete=False, dir=dir_tmp, encoding="utf-8"
+    ) as tmp:
         logger.debug("Writing in tmp file...")
         summary_about_produced_robots(tmp=tmp)
 
