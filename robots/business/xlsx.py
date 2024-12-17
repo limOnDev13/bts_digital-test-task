@@ -8,6 +8,8 @@ from .models import ProducedRobots, ProducedRobotsSummary
 class ProducedRobotsXLSX(ProducedRobotsSummary):
     """A class for saving the summary in the format .xlsx."""
 
+    fields = ("Модель", "Версия", "Количество за неделю")
+
     def __init__(self, summary: List[ProducedRobots]):
         super().__init__(summary)
         self.wb = Workbook()
@@ -17,7 +19,11 @@ class ProducedRobotsXLSX(ProducedRobotsSummary):
         models: Set[str] = {robot.model for robot in self.produced_robots}
         for model in models:
             ws = self.wb.create_sheet(model)
-            ws.append(ProducedRobots.fields())
+            ws.append(self.fields)
+
+        if models:
+            # remove default sheet
+            self.wb.remove(self.wb["Sheet"])
 
     def write_in_workbook(self):
         """Write data to the table."""
