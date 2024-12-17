@@ -1,13 +1,16 @@
+import io
 import json
 import random
-from datetime import datetime
+from datetime import datetime, timedelta
 from string import ascii_uppercase, digits
 from typing import Dict
 
 from django.http import JsonResponse
 from django.test import TestCase
 from django.urls import reverse
+from openpyxl import load_workbook
 
+from .factories import RobotFactory
 from .models import Robot
 
 SYMBOLS: str = ascii_uppercase + digits
@@ -80,3 +83,48 @@ class CreateRobotTestCase(TestCase):
             content_type="application/json",
         )
         self.assertEqual(response.status_code, 400)
+
+
+class GetSummaryTestCase(TestCase):
+    """Test case for view func get_summary_in_file."""
+
+    def setUp(self):
+        self.old_robots = [
+            RobotFactory.create(
+                created=datetime.now() - timedelta(days=random.randint(10, 20))
+            )
+            for _ in range(random.randint(20, 50))
+        ]
+        self.new_robots = [
+            RobotFactory.create(created=datetime.now())
+            for _ in range(random.randint(20, 50))
+        ]
+
+    def tearDown(self):
+        for robot in self.old_robots:
+            robot.delete()
+        for robot in self.new_robots:
+            robot.delete()
+
+    def test_get_summary_in_file(self):
+        """Test getting a summary about produced robots."""
+        response = self.client.get(reverse("robots:summary"))
+        self.assertEqual(response.status_code, 200)
+
+        content = response.content
+        wb = load_workbook(filename=io.BytesIO(content))
+
+        count_robots_in_excel: int = 0
+        for ws in wb:
+            self.assertEqual(ws["A1"].value, "Модель")
+            self.assertEqual(ws["B1"].value, "Версия")
+            self.assertEqual(ws["C1"].value, "Количество за неделю")
+            for cell in ws.iter_rows(min_row=2, max_col=1, values_only=True):
+                self.assertEqual(cell[0], ws.title)
+            count_robots_in_excel += sum(
+                int(cell[0])
+                for cell in ws.iter_rows(
+                    min_row=2, min_col=3, max_col=3, values_only=True
+                )
+            )
+        self.assertEqual(count_robots_in_excel, len(self.new_robots))
