@@ -34,7 +34,6 @@ class TestNumberOfRobotsProduced(TestCase):
 
         result: int = 0
         for robot in qs:
-            result += robot["num_versions"]
+            result += robot["num_robots"]
 
         self.assertEqual(len(self.new_robots), result)
-
