@@ -7,7 +7,8 @@ from typing import Any, Dict, List
 from django.http import HttpRequest, HttpResponse, JsonResponse
 from pydantic import ValidationError
 
-from .business.statistics import summary_about_produced_robots
+from .business.main import create_new_robot, summary_about_produced_robots
+from .business.models import RobotInfo
 from .models import Robot
 from .schemas import RobotSchema
 
@@ -47,7 +48,7 @@ def create_robot(request: HttpRequest) -> JsonResponse:
             validated_data["serial"] = "-".join(
                 (validated_data["model"], validated_data["version"])
             )
-            robot: Robot = Robot.objects.create(**validated_data)
+            robot: Robot = create_new_robot(RobotInfo(**validated_data))
 
             logger.debug("New robot created. Robot.pk=%d", robot.pk)
             return JsonResponse(
