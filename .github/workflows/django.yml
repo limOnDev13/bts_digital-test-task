@@ -30,7 +30,6 @@ jobs:
         flake8 .
         mypy --check-untyped-defs .
 
-
   tests:
     runs-on: ubuntu-latest
     strategy:
@@ -88,3 +87,4 @@ jobs:
       run: |
         echo ${{ secrets.TEST_EMAIL }}
         python manage.py migrate
+        python manage.py test
