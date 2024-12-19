@@ -5,7 +5,7 @@ on:
     branches: [ "master", "develop" ]
 
 jobs:
-  build:
+  linters:
 
     runs-on: ubuntu-latest
     strategy:
@@ -29,6 +29,62 @@ jobs:
         isort --check-only --diff .
         flake8 .
         mypy --check-untyped-defs .
-    - name: Run Tests
+
+
+  tests:
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 4
+      matrix:
+        python-version: [3.12]
+
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_DB: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+      redis:
+        image: redis:latest
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v3
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install Dependencies
       run: |
-        python manage.py test
+        python -m pip install --upgrade pip
+        pip install -r requirements_dev.txt
+    - name: Run Tests
+      env:
+        DJANGO_DEBUG: ${{ secrets.DJANGO_DEBUG }}
+        DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
+        DJANGO_LOGLEVEL: ${{ secrets.DJANGO_LOGLEVEL }}
+        DJANGO_ALLOWED_HOSTS: ${{ secrets.DJANGO_ALLOWED_HOSTS }}
+        POSTGRES_HOST: localhost
+        POSTGRES_DB: postgres
+        POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+        POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+        REDIS_HOST: localhost
+        EMAIL: ${{ secrets.EMAIL }}
+        EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+        SMTP_HOST: ${{ secrets.SMTP_HOST }}
+        SMTP_PORT: ${{ secrets.SMTP_PORT }}
+        TEST_EMAIL: ${{ secrets.TEST_EMAIL }}
+        DISABLE_CSRF: ${{ secrets.DISABLE_CSRF }}
+      run: |
+        echo ${{ secrets.TEST_EMAIL }}
+        python manage.py migrate
