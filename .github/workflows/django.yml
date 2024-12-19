@@ -79,4 +79,5 @@ jobs:
         POSTGRES_PASSWORD: postgres
       run: |
         echo ${{ secrets.DJANGO_DEBUG }}
+        python manage.py migrate
         python manage.py test
