@@ -1,5 +1,6 @@
+"""The module responsible for the operation of the customer queue."""
+
 from logging import getLogger
-from typing import Optional
 
 import redis
 from django.conf import settings
@@ -16,17 +17,21 @@ redis_client = redis.StrictRedis(
 
 
 class CustomersQueue:
+    """Class - the queue of customers."""
+
     def __init__(self):
         self.client = redis_client
 
     def num_serials(self, serial: str) -> int:
         """Get the number of robots of the selected series in stock."""
-        num: Optional[int] = self.client.get(serial)
+        num = self.client.get(serial)
         if num is None:
             self.client.set(serial, 0)
             return 0
-        else:
+        elif isinstance(num, str):
             return int(num)
+        else:
+            raise ValueError("num is not str.")
 
     def increase_num(self, serial: str) -> None:
         """Increase the number of robots of this series in stock by 1."""
@@ -55,7 +60,11 @@ class CustomersQueue:
         if not self.client.exists(queue_key):
             raise KeyError(f"There is no queue for the serial {queue_key}")
 
-        customer_id: int = int(self.client.lpop(queue_key))
+        customer_id_str = self.client.lpop(queue_key)
+        if isinstance(customer_id_str, str):
+            customer_id = int(customer_id_str)
+        else:
+            raise ValueError("customer_id_str is not str.")
 
         self.decrease_num(serial)
 
@@ -71,8 +80,14 @@ class CustomersQueue:
         """
         if not self.client.exists(f"queue_{serial}"):
             return 0
-        return self.client.llen(f"queue_{serial}")
+
+        len_queue = self.client.llen(f"queue_{serial}")
+        if isinstance(len_queue, int):
+            return len_queue
+        else:
+            raise ValueError("len_queue is not int.")
 
     def clear(self):
+        """Clear all keys in redis."""
         for key in self.client.scan_iter():
             self.client.delete(key)

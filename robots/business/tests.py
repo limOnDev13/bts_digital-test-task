@@ -1,3 +1,5 @@
+"""A module with tests for the business logic of the robots app."""
+
 import random
 from datetime import datetime, timedelta
 from typing import List
@@ -17,9 +19,10 @@ from .queries import produced_robots
 
 
 class TestNumberOfRobotsProduced(TestCase):
-    """Test case for number_of_robots_produced"""
+    """Test case for number_of_robots_produced."""
 
     def setUp(self):
+        """Set up tests."""
         self.start_date = datetime.now() - timedelta(days=7)
         self.end_date = datetime.now()
         self.old_robots = [
@@ -32,12 +35,14 @@ class TestNumberOfRobotsProduced(TestCase):
         ]
 
     def tearDown(self):
+        """Tear down tests."""
         for robot in self.old_robots:
             robot.delete()
         for robot in self.new_robots:
             robot.delete()
 
     def test_number_of_robots_produced(self):
+        """Test func number_of_robots_produced."""
         qs = produced_robots(self.start_date, self.end_date)
 
         result: int = 0
@@ -48,7 +53,10 @@ class TestNumberOfRobotsProduced(TestCase):
 
 
 class CreateRobotTestCase(TestCase):
+    """Test case for testing the func create_new_robot."""
+
     def setUp(self):
+        """Set up tests."""
         self.robot_info = RobotInfo(
             serial="R2-D2", model="R2", version="D2", created=str(datetime.now())
         )
@@ -59,11 +67,13 @@ class CreateRobotTestCase(TestCase):
         self.queue = CustomersQueue()
 
     def tearDown(self):
+        """Tear down tests."""
         self.queue.clear()
         if self.customer.pk is not None:
             self.customer.delete()
 
     def test_create_new_robot_without_queue(self):
+        """Test the func without queue customers."""
         robot: Robot = create_new_robot(self.robot_info)
         self.assertTrue(Robot.objects.filter(pk=robot.pk).exists())
         self.assertEqual(self.queue.num_serials(robot.serial), 1)
@@ -72,6 +82,7 @@ class CreateRobotTestCase(TestCase):
         robot.delete()
 
     def test_create_new_robot_with_big_queue(self):
+        """Test the function with more orders than robots."""
         num_orders: int = random.randint(3, 10)
         num_robots: int = random.randint(1, num_orders - 1)
 
@@ -92,6 +103,7 @@ class CreateRobotTestCase(TestCase):
             robot.delete()
 
     def test_create_new_robot_with_small_queue(self):
+        """Test the function with more robots than orders."""
         num_orders: int = random.randint(1, 3)
         num_robots: int = random.randint(num_orders, num_orders + random.randint(1, 10))
 
@@ -113,6 +125,7 @@ class CreateRobotTestCase(TestCase):
             robot.delete()
 
     def test_create_robot_when_customer_has_left(self):
+        """Test the function with removed customers."""
         num_orders: int = random.randint(1, 3)
         num_robots: int = random.randint(num_orders, num_orders + random.randint(1, 10))
 

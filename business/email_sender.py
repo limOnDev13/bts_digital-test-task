@@ -1,3 +1,5 @@
+"""The module responsible for sending emails."""
+
 import smtplib
 from logging import getLogger
 
@@ -15,6 +17,7 @@ logger = getLogger("view.email")
 
 
 def send_email(email: str, model: str, version: str) -> None:
+    """Send an email about this model and version."""
     sender = settings.EMAIL
     sender_password = settings.EMAIL_PASSWORD
 

@@ -1,3 +1,5 @@
+"""The module responsible for the robots application models."""
+
 from django.db import models
 
 

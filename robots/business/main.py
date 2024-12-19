@@ -1,3 +1,5 @@
+"""A module with the main functions of the business module."""
+
 from datetime import date, datetime, timedelta
 from logging import getLogger
 from typing import List, Optional, Type
@@ -49,6 +51,19 @@ def summary_about_produced_robots(
 
 
 def create_new_robot(robot_info: RobotInfo) -> Robot:
+    """
+    Create a new robot.
+
+    The function creates a new robot entity.
+    If there is a queue for this robot,
+    an email notification is sent to the first customer in the queue.
+    If the customer managed to leave during the creation of the robot,
+    then the next buyer in turn is taken.
+    If there is no queue, then the robot is sent to the warehouse
+    (the number of robots of this series in the warehouse increases by 1).
+    :param robot_info: Info about a new robot.
+    :return: Created robot.
+    """
     logger.debug("Creating a new robot...")
     robot: Robot = Robot.objects.create(**robot_info.to_dict())
     queue = CustomersQueue()

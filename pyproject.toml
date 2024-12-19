@@ -40,7 +40,8 @@ exclude = [
     '.*/settings\.py',
     '.*manage\.py',
     '.*wsgi\.py',
-    '.*asgi\.py'
+    '.*asgi\.py',
+    '.*test\.py',
 ]
 ignore_missing_imports = true
 

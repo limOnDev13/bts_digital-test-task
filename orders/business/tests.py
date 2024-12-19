@@ -1,3 +1,5 @@
+"""A module with tests for business logic."""
+
 import random
 from typing import List
 
@@ -13,8 +15,10 @@ from .models import OrderInfo
 
 
 class CreateNewOrderTestCase(TestCase):
+    """Test case for testing the func create_new_order."""
 
     def setUp(self):
+        """Set up tests."""
         self.serial = "R2-D2"
         self.customer = Customer.objects.create(email=settings.TEST_EMAIL)
         self.order_info = OrderInfo(
@@ -23,10 +27,12 @@ class CreateNewOrderTestCase(TestCase):
         self.queue = CustomersQueue()
 
     def tearDown(self):
+        """Tear down tests."""
         self.customer.delete()
         self.queue.clear()
 
     def test_create_new_order(self):
+        """Test the funс with random numbers of robots and orders."""
         num_robots: int = random.randint(0, 10)
         num_orders: int = random.randint(1, 10)
 
@@ -52,6 +58,7 @@ class CreateNewOrderTestCase(TestCase):
             order.delete()
 
     def test_create_new_order_with_large_number_of_robots(self):
+        """Test the func with more robots than orders."""
         num_robots: int = random.randint(3, 10)
         num_orders: int = random.randint(1, num_robots)
 
@@ -73,6 +80,7 @@ class CreateNewOrderTestCase(TestCase):
             order.delete()
 
     def test_create_new_order_without_robots(self):
+        """Test the func without robots."""
         num_orders: int = random.randint(1, 10)
 
         orders: List[Order] = list()

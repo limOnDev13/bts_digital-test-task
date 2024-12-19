@@ -1,3 +1,5 @@
+"""The module responsible for the main functions of the business logic."""
+
 from logging import getLogger
 from typing import Tuple
 

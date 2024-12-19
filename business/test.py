@@ -1,3 +1,5 @@
+"""A module with tests for basic business logic."""
+
 import random
 
 import redis
@@ -10,7 +12,10 @@ from .queue import CustomersQueue
 
 
 class CustomerQueueTestCase(TestCase):
+    """Test case for testing CustomerQueue."""
+
     def setUp(self):
+        """Set up tests."""
         self.queue = CustomersQueue()
         self.client = redis.StrictRedis(
             host=settings.REDIS_HOST,
@@ -23,10 +28,12 @@ class CustomerQueueTestCase(TestCase):
         self.client.set(self.serial, 0)
 
     def tearDown(self):
+        """Tear down tests."""
         self.client.delete(self.serial)
         self.queue.clear()
 
     def test_increase_num(self):
+        """Test the method CustomersQueue.increase_num."""
         test_num: int = random.randint(5, 10)
 
         for _ in range(test_num):
@@ -35,6 +42,7 @@ class CustomerQueueTestCase(TestCase):
         self.assertEqual(int(self.client.get(self.serial)), test_num)
 
     def test_decrease_num(self):
+        """Test the method CustomersQueue.decrease_num."""
         test_num: int = random.randint(5, 10)
 
         for _ in range(test_num):
@@ -55,6 +63,7 @@ class CustomerQueueTestCase(TestCase):
         self.assertEqual(int(self.client.get(self.serial)), 0)
 
     def test_num_serials(self):
+        """Test the method CustomersQueue.num_serials."""
         test_num: int = random.randint(5, 10)
 
         for _ in range(test_num):
@@ -67,6 +76,7 @@ class CustomerQueueTestCase(TestCase):
         self.assertEqual(self.queue.num_serials(not_existing_serial), 0)
 
     def test_add(self):
+        """Test the method CustomersQueue.add."""
         len_queue = random.randint(5, 10)
 
         for _ in range(len_queue):
@@ -76,6 +86,7 @@ class CustomerQueueTestCase(TestCase):
         self.assertEqual(self.client.llen(self.queue_name), len_queue)
 
     def test_pop(self):
+        """Test the method CustomersQueue.pop."""
         len_queue = random.randint(5, 10)
 
         for _ in range(len_queue):
@@ -86,6 +97,7 @@ class CustomerQueueTestCase(TestCase):
             self.assertEqual(self.queue.pop(self.serial), 1)
 
     def test_len_queue(self):
+        """Test the method CustomersQueue.len_queue."""
         len_queue = random.randint(5, 10)
 
         for _ in range(len_queue):
@@ -93,7 +105,7 @@ class CustomerQueueTestCase(TestCase):
 
         self.assertEqual(self.queue.len_queue(self.serial), len_queue)
 
-        not_existing_queue: str = f"queue_XX-11"
+        not_existing_queue: str = "queue_XX-11"
         if self.client.exists(not_existing_queue):
             self.client.delete(not_existing_queue)
         self.assertEqual(self.queue.len_queue(not_existing_queue), 0)

@@ -17,12 +17,12 @@ SYMBOLS: str = ascii_uppercase + digits
 
 
 def _return_random_model() -> str:
-    """Returns random model (version)."""
+    """Return random model (version)."""
     return random.choice(SYMBOLS) + random.choice(SYMBOLS)
 
 
 class CreateRobotTestCase(TestCase):
-    """Test case for create_robot"""
+    """Test case for the func create_robot."""
 
     test_robots_data = [
         {
@@ -43,6 +43,7 @@ class CreateRobotTestCase(TestCase):
     ]
 
     def setUp(self):
+        """Set up tests."""
         self.random_robot_data: Dict[str, str] = {
             "model": random.choice(ascii_uppercase) + random.choice(digits),
             "version": _return_random_model(),
@@ -51,6 +52,7 @@ class CreateRobotTestCase(TestCase):
         self.test_robots_data.append(self.random_robot_data)
 
     def tearDown(self):
+        """Tear down tests."""
         self.test_robots_data.remove(self.random_robot_data)
 
     def test_create_robot(self):
@@ -89,6 +91,7 @@ class GetSummaryTestCase(TestCase):
     """Test case for view func get_summary_in_file."""
 
     def setUp(self):
+        """Set up tests."""
         self.old_robots = [
             RobotFactory.create(
                 created=datetime.now() - timedelta(days=random.randint(10, 20))
@@ -101,6 +104,7 @@ class GetSummaryTestCase(TestCase):
         ]
 
     def tearDown(self):
+        """Tear down tests."""
         for robot in self.old_robots:
             robot.delete()
         for robot in self.new_robots:

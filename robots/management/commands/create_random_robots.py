@@ -1,3 +1,5 @@
+"""The module is a django command for filling the database with random robots."""
+
 from django.core.management import BaseCommand
 
 from robots.factories import RobotFactory

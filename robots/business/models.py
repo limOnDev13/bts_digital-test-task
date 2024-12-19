@@ -1,16 +1,21 @@
+"""A module with models for the business logic of the robots app."""
+
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Any, List, Tuple
+from typing import Any, Dict, List, Tuple
 
 
 @dataclass
 class RobotInfo:
+    """Class for storing info about the robot."""
+
     serial: str
     model: str
     version: str
     created: str
 
-    def to_dict(self):
+    def to_dict(self) -> Dict[str, Any]:
+        """Return dict with info about the robot."""
         return {
             "serial": self.serial,
             "model": self.model,
