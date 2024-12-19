@@ -3,11 +3,13 @@ from logging import getLogger
 
 from django.conf import settings
 
-EMAIL_TEXT: str = """
-Добрый день!
-Недавно вы интересовались нашим роботом модели {model}, версии {version}. 
-Этот робот теперь в наличии. Если вам подходит этот вариант - пожалуйста, свяжитесь с нами
-"""
+EMAIL_TEXT: str = (
+    "Добрый день!\n"
+    "Недавно вы интересовались нашим роботом"
+    " модели {model}, версии {version}.\n"
+    "Этот робот теперь в наличии."
+    " Если вам подходит этот вариант - пожалуйста, свяжитесь с нами"
+)
 
 logger = getLogger("view.email")
 
@@ -23,7 +25,8 @@ def send_email(email: str, model: str, version: str) -> None:
         mail_lib.login(sender, sender_password)
 
         msg = (
-            'From: %s\r\nTo: %s\r\nContent-Type: text/plain; charset="utf-8"\r\nSubject: %s\r\n\r\n'
+            "From: %s\r\nTo: %s\r\n"
+            'Content-Type: text/plain; charset="utf-8"\r\nSubject: %s\r\n\r\n'
             % (sender, email, f"{model}-{version} появился в наличии!")
         )
         msg += EMAIL_TEXT.format(model=model, version=version)
