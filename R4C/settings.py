@@ -83,7 +83,6 @@ WSGI_APPLICATION = 'R4C.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
-
 DATABASE_DIR = BASE_DIR / "database"
 DATABASE_DIR.mkdir(exist_ok=True)
 DATABASES = {
@@ -160,3 +159,11 @@ LOGGING = {
         },
     },
 }
+
+EMAIL = os.getenv("EMAIL")
+TEST_EMAIL = os.getenv("TEST_EMAIL", EMAIL)
+EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
+SMTP_HOST = os.getenv("SMTP_HOST")
+SMTP_PORT = int(os.getenv("SMTP_PORT", 465))
+
+REDIS_HOST = os.getenv("REDIS_HOST", "localhost")
