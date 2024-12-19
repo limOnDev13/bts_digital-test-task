@@ -46,8 +46,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'customers',
-    'orders',
-    'robots.apps.RobotsConfig'
+    'orders.apps.OrdersConfig',
+    'robots.apps.RobotsConfig',
 ]
 
 MIDDLEWARE = [
