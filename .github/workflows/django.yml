@@ -77,7 +77,7 @@ jobs:
         POSTGRES_DB: postgres
         POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
         POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-        REDIS_HOST: ${{ secrets.REDIS_HOST }}
+        REDIS_HOST: localhost
         EMAIL: ${{ secrets.EMAIL }}
         EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
         SMTP_HOST: ${{ secrets.SMTP_HOST }}
