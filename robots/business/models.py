@@ -4,6 +4,22 @@ from typing import Any, List, Tuple
 
 
 @dataclass
+class RobotInfo:
+    serial: str
+    model: str
+    version: str
+    created: str
+
+    def to_dict(self):
+        return {
+            "serial": self.serial,
+            "model": self.model,
+            "version": self.version,
+            "created": self.created,
+        }
+
+
+@dataclass
 class ProducedRobots:
     """Class for storing information about produced robots."""
 
