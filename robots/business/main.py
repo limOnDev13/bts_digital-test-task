@@ -1,5 +1,6 @@
 """A module with the main functions of the business module."""
 
+import threading
 from datetime import date, datetime, timedelta
 from logging import getLogger
 from typing import List, Optional, Type
@@ -89,7 +90,11 @@ def create_new_robot(robot_info: RobotInfo) -> Robot:
         else:
             # If we didn't catch a break,
             # then there was an existing customer in the queue
-            send_email(email=customer.email, model=robot.model, version=robot.version)
+            logger.debug("Sending email...")
+            t = threading.Thread(
+                target=send_email, args=(customer.email, robot.model, robot.version)
+            )
+            t.start()
     else:
         logger.debug("There are no customers in the queue for this model")
         queue.increase_num(robot.serial)
