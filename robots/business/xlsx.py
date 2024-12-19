@@ -1,3 +1,5 @@
+"""The module responsible for generating a summary in the format .xlsx."""
+
 from typing import List, Set
 
 from openpyxl import Workbook
@@ -31,6 +33,7 @@ class ProducedRobotsXLSX(ProducedRobotsSummary):
             self.wb[robot.model].append(robot.data_in_list)
 
     def save_file(self, tmp) -> None:
+        """Save summary in file .xlsx."""
         self.create_sheets_with_headers()
         self.write_in_workbook()
         self.wb.save(tmp.name)

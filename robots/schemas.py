@@ -1,3 +1,5 @@
+"""A module with pydantic schemas for the robots application."""
+
 from datetime import datetime
 from string import ascii_uppercase, digits
 from typing import Set
@@ -8,6 +10,8 @@ MODELS: Set[str] = {f"{let}{dig}" for let in ascii_uppercase for dig in digits}
 
 
 class RobotSchema(BaseModel):
+    """Robot schema."""
+
     model: str = Field(max_length=2)
     version: str = Field(max_length=2)
     created: datetime

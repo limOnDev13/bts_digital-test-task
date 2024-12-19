@@ -1,3 +1,5 @@
+"""A module with functions for database queries."""
+
 from datetime import datetime
 from logging import getLogger
 

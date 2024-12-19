@@ -1,3 +1,5 @@
+"""A module with factory classes for the robots application."""
+
 import random
 from datetime import datetime, timedelta
 from typing import List
@@ -16,9 +18,11 @@ VERSIONS: List[str] = ["XS", "XL", "XX", "LE", "R1"]
 
 
 class RobotFactory(DjangoModelFactory):
-    """Robot factory"""
+    """Robot factory."""
 
     class Meta:
+        """Meta class."""
+
         model = Robot
 
     serial = LazyAttribute(lambda o: "-".join((o.model, o.version)))

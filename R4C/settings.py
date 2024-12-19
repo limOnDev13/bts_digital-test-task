@@ -46,19 +46,22 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'customers',
-    'orders',
-    'robots.apps.RobotsConfig'
+    'orders.apps.OrdersConfig',
+    'robots.apps.RobotsConfig',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+DISABLE_CSRF = getenv("DISABLE_CSRF", "0") == "1"
+if not DISABLE_CSRF:
+    MIDDLEWARE.append('django.middleware.csrf.CsrfViewMiddleware')
 
 ROOT_URLCONF = 'R4C.urls'
 
@@ -83,7 +86,6 @@ WSGI_APPLICATION = 'R4C.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
-
 DATABASE_DIR = BASE_DIR / "database"
 DATABASE_DIR.mkdir(exist_ok=True)
 DATABASES = {
@@ -160,3 +162,11 @@ LOGGING = {
         },
     },
 }
+
+EMAIL = os.getenv("EMAIL")
+TEST_EMAIL = os.getenv("TEST_EMAIL", EMAIL)
+EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
+SMTP_HOST = os.getenv("SMTP_HOST")
+SMTP_PORT = int(os.getenv("SMTP_PORT", 465))
+
+REDIS_HOST = os.getenv("REDIS_HOST", "localhost")
