@@ -1,10 +1,18 @@
 import random
 from datetime import datetime, timedelta
+from typing import List
 
+from django.conf import settings
 from django.test import TestCase
 
+from business.queue import CustomersQueue
+from customers.models import Customer
+from orders.business.models import OrderInfo
 from robots.factories import RobotFactory
+from robots.models import Robot
 
+from .main import create_new_robot
+from .models import RobotInfo
 from .queries import produced_robots
 
 
@@ -37,3 +45,91 @@ class TestNumberOfRobotsProduced(TestCase):
             result += robot["num_robots"]
 
         self.assertEqual(len(self.new_robots), result)
+
+
+class CreateRobotTestCase(TestCase):
+    def setUp(self):
+        self.robot_info = RobotInfo(
+            serial="R2-D2", model="R2", version="D2", created=str(datetime.now())
+        )
+        self.customer = Customer.objects.create(email=settings.TEST_EMAIL)
+        self.order_info = OrderInfo(
+            customer_id=self.customer.pk, robot_serial=self.robot_info.serial
+        )
+        self.queue = CustomersQueue()
+
+    def tearDown(self):
+        self.queue.clear()
+        if self.customer.pk is not None:
+            self.customer.delete()
+
+    def test_create_new_robot_without_queue(self):
+        robot: Robot = create_new_robot(self.robot_info)
+        self.assertTrue(Robot.objects.filter(pk=robot.pk).exists())
+        self.assertEqual(self.queue.num_serials(robot.serial), 1)
+        self.assertEqual(self.queue.len_queue(robot.serial), 0)
+
+        robot.delete()
+
+    def test_create_new_robot_with_big_queue(self):
+        num_orders: int = random.randint(3, 10)
+        num_robots: int = random.randint(1, num_orders - 1)
+
+        for _ in range(num_orders):
+            self.queue.add(self.order_info)
+
+        robots: List[Robot] = list()
+        for i in range(num_robots):
+            robot: Robot = create_new_robot(self.robot_info)
+
+            self.assertTrue(Robot.objects.filter(pk=robot.pk).exists())
+            # There are fewer robots than orders
+            self.assertEqual(self.queue.num_serials(robot.serial), 0)
+            self.assertEqual(self.queue.len_queue(robot.serial), num_orders - i - 1)
+            robots.append(robot)
+
+        for robot in robots:
+            robot.delete()
+
+    def test_create_new_robot_with_small_queue(self):
+        num_orders: int = random.randint(1, 3)
+        num_robots: int = random.randint(num_orders, num_orders + random.randint(1, 10))
+
+        for _ in range(num_orders):
+            self.queue.add(self.order_info)
+
+        robots: List[Robot] = list()
+        for i in range(num_robots):
+            robot: Robot = create_new_robot(self.robot_info)
+
+            self.assertTrue(Robot.objects.filter(pk=robot.pk).exists())
+
+        self.assertEqual(self.queue.len_queue(self.robot_info.serial), 0)
+        self.assertEqual(
+            self.queue.num_serials(self.robot_info.serial), num_robots - num_orders
+        )
+
+        for robot in robots:
+            robot.delete()
+
+    def test_create_robot_when_customer_has_left(self):
+        num_orders: int = random.randint(1, 3)
+        num_robots: int = random.randint(num_orders, num_orders + random.randint(1, 10))
+
+        for _ in range(num_orders):
+            self.queue.add(self.order_info)
+
+        # Delete customer
+        self.customer.delete()
+
+        robots: List[Robot] = list()
+        for i in range(num_robots):
+            robot: Robot = create_new_robot(self.robot_info)
+
+            self.assertTrue(Robot.objects.filter(pk=robot.pk).exists())
+
+        self.assertEqual(self.queue.len_queue(self.robot_info.serial), 0)
+        self.assertEqual(self.queue.num_serials(self.robot_info.serial), num_robots)
+
+        for robot in robots:
+            robot.delete()
