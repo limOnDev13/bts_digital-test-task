@@ -54,11 +54,14 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+DISABLE_CSRF = getenv("DISABLE_CSRF", "0") == "1"
+if not DISABLE_CSRF:
+    MIDDLEWARE.append('django.middleware.csrf.CsrfViewMiddleware')
 
 ROOT_URLCONF = 'R4C.urls'
 
