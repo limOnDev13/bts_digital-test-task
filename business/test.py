@@ -17,6 +17,7 @@ class CustomerQueueTestCase(TestCase):
     def setUp(self):
         """Set up tests."""
         self.queue = CustomersQueue()
+        self.queue.clear()
         self.client = redis.StrictRedis(
             host=settings.REDIS_HOST,
             charset="utf-8",
