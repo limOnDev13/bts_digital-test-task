@@ -78,6 +78,6 @@ jobs:
         POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
         POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
       run: |
-        echo ${{ secrets.DJANGO_DEBUG }}
+        echo ${{ secrets.TEST_EMAIL }}
         python manage.py migrate
         python manage.py test
